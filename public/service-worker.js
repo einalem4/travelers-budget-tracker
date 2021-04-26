@@ -1,73 +1,69 @@
 
-const CACHE_NAME = "budget-tracker-cache-v1";
-const DATA_CACHE_NAME = "data-cache-v1";
+const APP_PREFIX = 'BudgetTracker-';
+const VERSION = 'version_01';
+const CACHE_NAME = APP_PREFIX + VERSION;
+
 const FILES_TO_CACHE = [
-  "/",
-  "/index.html",
-  "/assets/css/styles.css",
-  "/assets/js/index.js",
-  "/assets/js/db.js",
-  "/assets/images/icons/icon-192x192.png",
-  "/assets/images/icons/icon-512x512.png",
-  "https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css",
-  "https://cdn.jsdelivr.net/npm/chart.js@2.8.0"
+  '/',
+  '/index.html',
+  '/js/index.js',
+  '/js/idb.js',
+  '/manifest.json',
+  '/css/styles.css',
+  '/icons/icon-72x72.png',
+  '/icons/icon-96x96.png',
+  '/icons/icon-128x128.png',
+  '/icons/icon-144x144.png',
+  '/icons/icon-152x152.png',
+  '/icons/icon-192x192.png',
+  '/icons/icon-384x384.png',
+  '/icons/icon-512x512.png'
 ];
 
-// Cache resources
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(FILES_TO_CACHE);
-    })
-  );
 
-  self.skipWaiting();
+// adding files to the precache so that the application can use the cache (installing service worker)
+self.addEventListener('install', function (e) {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(function (cache) {
+      console.log('installing cache : ' + CACHE_NAME)
+      return cache.addAll(FILES_TO_CACHE)
+    })
+  )
 });
 
-// Delete outdated caches
-self.addEventListener("activate", (evt) => {
-  evt.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(
-        keyList.map((key) => {
-          if (key !== CACHE_NAME && key !== DATA_CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
+// activate a service worker
+self.addEventListener('activate', function (e) {
+  e.waitUntil(
+    caches.keys().then(function (keyList) {
+      let cacheKeeplist = keyList.filter(function (key) {
+        return key.indexOf(APP_PREFIX);
+      });
+      cacheKeeplist.push(CACHE_NAME);
+      // returns a promise that resolves once all old versions of the cache have been deleted 
+      return Promise.all(keyList.map(function (key, i) {
+        if (cacheKeeplist.indexOf(key) === -1) {
+          console.log('deleting cache : ' + keyList[i]);
+          return caches.delete(keyList[i]);
+        }
+      })
       );
     })
-  );
-
-  self.clients.claim();
+  )
 });
 
-// Respond with cached resources
-self.addEventListener("fetch", (e) => {
-  if (e.request.url.includes("/api/") && e.request.method === "GET") {
-    e.respondWith(
-      caches
-        .open(DATA_CACHE_NAME)
-        .then((cache) => {
-          return fetch(e.request)
-            .then((response) => {
-              // If the response was good, clone it and store it in the cache.
-              if (response.status === 200) {
-                cache.put(evt.request, response.clone());
-              }
-
-              return response;
-            })
-            .catch(() => {
-              return cache.match(e.request);
-            });
-        })
-        .catch((err) => console.log(err))
-    );
-    return;
-  }
+// retrieving information from the cache 
+self.addEventListener('fetch', function (e) {
+  console.log('fetch request : ' + e.request.url)
   e.respondWith(
-    caches.match(e.request).then((response) => {
-      return response || fetch(e.request);
+    caches.match(e.request).then(function (request) {
+      if (request) { // if cache is available, respond with cache
+        console.log('responding with cache : ' + e.request.url)
+        return request
+      } else {       // if there are no cache, try fetching request
+        console.log('file is not cached, fetching : ' + e.request.url)
+        //   console.log(e.request.url)
+        return fetch(e.request)
+      }
     })
-  );
+  )
 });

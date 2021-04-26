@@ -21,14 +21,17 @@ const FILES_TO_CACHE = [
 ];
 
 
+
 // adding files to the precache so that the application can use the cache (installing service worker)
 self.addEventListener('install', function (e) {
   e.waitUntil(
-    caches.open(CACHE_NAME).then(function (cache) {
+    caches.open(CACHE_NAME).then(cache => {
       console.log('installing cache : ' + CACHE_NAME)
-      return cache.addAll(FILES_TO_CACHE)
+      return cache.addAll(FILES_TO_CACHE);
     })
-  )
+  );
+
+  self.skipWaiting();
 });
 
 // activate a service worker
@@ -49,6 +52,7 @@ self.addEventListener('activate', function (e) {
       );
     })
   )
+  self.clients.claim();
 });
 
 // retrieving information from the cache 
@@ -61,7 +65,6 @@ self.addEventListener('fetch', function (e) {
         return request
       } else {       // if there are no cache, try fetching request
         console.log('file is not cached, fetching : ' + e.request.url)
-        //   console.log(e.request.url)
         return fetch(e.request)
       }
     })

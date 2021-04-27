@@ -29,6 +29,7 @@ self.addEventListener('install', function (e) {
       return cache.addAll(FILES_TO_CACHE);
     })
   );
+  self.skipWaiting();
 });
 
 // Cache resources
@@ -49,6 +50,7 @@ self.addEventListener('activate', function (e) {
       );
     })
   )
+  self.clients.claim();
 });
 
 // Delete outdated caches

@@ -6,7 +6,7 @@ Check out the badges hosted by [shields.io](https://shields.io/).
 
 ## Description:
 
-A budget tracker application that allows for offline access and functionality. The user will be able to add expenses and deposits to their budget with or without a connection. If the user enters transactions offline, the total will be updated when they're brought back online.
+A Progressive Web Application that allows for offline access and functionality. The user will be able to add expenses and deposits to their budget with or without a connection. If the user enters transactions offline, the total will be updated when they're brought back online.
 
 ## Table of Contents
 

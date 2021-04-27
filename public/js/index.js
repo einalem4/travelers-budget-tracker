@@ -132,11 +132,13 @@ function sendTransaction(isAdding) {
       // clear form
       nameEl.value = "";
       amountEl.value = "";
+      alert("Your transactions have been saved!")
     }
   })
   .catch(err => {
     // fetch failed, so save in indexed db
     saveRecord(transaction);
+    alert("Your transaction has been saved for when you're back online!")
 
     // clear form
     nameEl.value = "";

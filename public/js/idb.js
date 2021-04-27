@@ -55,6 +55,7 @@ function uploadTransaction() {
           if (serverResponse.message) {
             throw new Error(serverResponse);
           }
+          alert("Your offline transactions has been saved!");
           const transaction = db.transaction(['new_transaction'], 'readwrite');
           const budgetObjectStore = transaction.objectStore('new_transaction');
           // clear all items in your store

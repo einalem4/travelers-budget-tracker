@@ -33,6 +33,9 @@ Then invoke the application with `npm start`
 
 ## Preview:
 
+Live Site: https://travelers-budget-tracker.herokuapp.com/
+
+![Budget Tracker image](public/assets/budget.png)
 
 ## Built With:
 

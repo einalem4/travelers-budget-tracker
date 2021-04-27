@@ -29,7 +29,7 @@ function saveRecord(record) {
   const budgetObjectStore = transaction.objectStore("new_transaction");
   // add record to your store with add method
   budgetObjectStore.add(record);
-}
+};
 
 // when a user is online
 function uploadTransaction() {
